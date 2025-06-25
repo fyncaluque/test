@@ -9,12 +9,15 @@ import { MatCardModule } from '@angular/material/card';
   styleUrls: ['./captura-camara.component.css'],
 })
 export class CapturaCamaraComponent {
-   /** Variables para la cámara */
+ /** Variables para la cámara */
   @ViewChild('video') video!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
-
   stream: MediaStream | null = null;
+  /** Variable para emitir la foto capturada */
+  @Output() photoCaptured = new EventEmitter<{ dataUrl: string, blobUrl: string }>();
+  /** Variable para mostrar la URL de la imagen capturada */
   capturedImageUrl: string | null = null;
+  /** Variable para mostrar el modal */
   showModal = false;
 
   ngAfterViewInit() {}
@@ -31,26 +34,38 @@ export class CapturaCamaraComponent {
         this.video.nativeElement.srcObject = this.stream;
       }
     } catch (error) {
-      console.error('No se pudo acceder a la cámara', error);
+      this._sweetAlert.toastError('No se pudo acceder a la cámara');
     }
   }
 
+  /**
+   * @method capturePhoto
+   * @description Captura la foto
+   */
   capturePhoto() {
     const video = this.video.nativeElement;
     const canvas = this.canvas.nativeElement;
     const context = canvas.getContext('2d');
     if (!context) return;
-
+  
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
+  
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+  
     const imageDataUrl = canvas.toDataURL('image/png');
     const blob = this.dataURLtoBlob(imageDataUrl);
-    this.capturedImageUrl = URL.createObjectURL(blob);
-
-    this.closeCameraModal(); // cerrar modal después de capturar
+    const blobUrl = URL.createObjectURL(blob);
+  
+    this.capturedImageUrl = blobUrl;
+  
+    // 👇 Emitimos al componente padre
+    this.photoCaptured.emit({
+      dataUrl: imageDataUrl,
+      blobUrl: blobUrl
+    });
+  
+    this.closeCameraModal();
   }
 
   /**
