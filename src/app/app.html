@@ -1,2 +1,5 @@
-<app-captura-camara></app-captura-camara>
+@if(photoPreviewUrl){
+  <img [src]="photoPreviewUrl" alt="Foto adjunta" />
+}
+<app-camara-captura (photoCaptured)="onPhotoCaptured($event)"></app-camara-captura>
 <router-outlet />
