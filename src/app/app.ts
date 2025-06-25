@@ -10,4 +10,12 @@ import { CapturaCamaraComponent } from './captura-camara/captura-camara.componen
 })
 export class App {
   protected title = 'test';
+
+  onPhotoCaptured(event: { dataUrl: string; blobUrl: string }) {
+        console.log('Base64:', event.dataUrl);
+        console.log('URL del blob:', event.blobUrl);
+
+        this.photoPreviewUrl = event.blobUrl;
+    }
+}
 }
