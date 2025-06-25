@@ -1,0 +1,17 @@
+<mat-card class="p-4">
+  <h2>Acceder a Cámara</h2>
+
+  <video #video autoplay playsinline class="w-full rounded shadow"></video>
+  <canvas #canvas hidden></canvas>
+
+  <div class="mt-4">
+    <button mat-raised-button color="primary" (click)="capturePhoto()">Capturar Foto</button>
+  </div>
+
+  <div *ngIf="imageDataUrl" class="mt-4">
+    <img [src]="imageDataUrl" alt="Captura" class="w-full max-w-sm rounded shadow" />
+    <div class="mt-2">
+      <button mat-raised-button color="accent" (click)="uploadPhoto()">Subir al servidor</button>
+    </div>
+  </div>
+</mat-card>
